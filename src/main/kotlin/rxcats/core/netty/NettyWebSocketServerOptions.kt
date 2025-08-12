@@ -5,7 +5,7 @@ import io.netty.handler.logging.LogLevel
 class NettyWebSocketServerOptions(
     val port: Int = 8080,
 
-    val wsPath: String = "/ws",
+    val websocketPath: String = "/ws",
 
     // 0 : 최소 1개, 사용가능한 프로세서 * 2
     val bossGroupThreadSize: Int = 1,

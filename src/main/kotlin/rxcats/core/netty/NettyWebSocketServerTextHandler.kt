@@ -5,25 +5,25 @@ import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import org.slf4j.LoggerFactory
 
-class NettyWebSocketTextHandler : SimpleChannelInboundHandler<TextWebSocketFrame>() {
-    private val log = LoggerFactory.getLogger(NettyWebSocketTextHandler::class.java)
+class NettyWebSocketServerTextHandler : SimpleChannelInboundHandler<TextWebSocketFrame>() {
+    private val log = LoggerFactory.getLogger(NettyWebSocketServerTextHandler::class.java)
 
     override fun isSharable(): Boolean {
         return true
     }
 
     override fun channelRead0(ctx: ChannelHandlerContext, msg: TextWebSocketFrame) {
-        log.info("Received message: [{}] - {}", ctx.channel().id(), msg.text())
-        ctx.channel().writeAndFlush(msg)
+        log.info("Received message: [{}] - ({}) {}", ctx.channel().id(), msg.refCnt(), msg.text())
+        ctx.channel().writeAndFlush(TextWebSocketFrame("RESPONSE ${msg.text()}"))
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext) {
-        super.channelInactive(ctx)
         log.info("channelInactive: [{}]", ctx.channel().id())
+        super.channelInactive(ctx)
     }
 
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
+        log.error("exceptionCaught: [{}] - {}", ctx.channel().id(), cause.message)
         super.exceptionCaught(ctx, cause)
-        log.info("exceptionCaught: [{}] - {}", ctx.channel().id(), cause.message)
     }
 }

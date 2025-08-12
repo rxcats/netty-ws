@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
 
 open class NettyWebSocketServer(
     private val options: NettyWebSocketServerOptions,
-    private val wsHandler: NettyWebSocketTextHandler,
+    private val textHandler: NettyWebSocketServerTextHandler,
 ) {
     private val log = LoggerFactory.getLogger(NettyWebSocketServer::class.java)
 
@@ -64,11 +64,9 @@ open class NettyWebSocketServer(
                 override fun initChannel(ch: SocketChannel) {
                     ch.pipeline()
                         .addLast(HttpServerCodec())
-                        .addLast(
-                            WebSocketServerProtocolHandler(options.wsPath),
-                        )
+                        .addLast(WebSocketServerProtocolHandler(options.websocketPath))
                         .addLast(LoggingHandler(options.logLevel))
-                        .addLast(wsHandler)
+                        .addLast(textHandler)
                 }
             })
 
